@@ -26,7 +26,7 @@ view.addOnLayoutChangeListener(object : View.OnLayoutChangeListener {
                         0f, v.height.toFloat() / 3 * 2, v.width.toFloat(), v.height.toFloat(),
                         BG_COLOURS, POSITION, Shader.TileMode.CLAMP
                     ) 
-                    setStroke(DensityUtil.dp2px(3f).toFloat(), gradient)//这里添加边框线
+                    setStroke(DensityUtil.dp2px(3f).toFloat(), gradient)//添加边框线
                     setRadius(DensityUtil.dp2px(10f).toFloat()) //添加倒角
                 }
                 v.background = ShapeDrawable(shape) //将背景设置到view上
