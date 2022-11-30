@@ -5,12 +5,15 @@ import android.graphics.*
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.shapes.RoundRectShape
 import android.os.Build
-import android.text.TextPaint
 import android.util.Log
 import android.view.View
 import android.view.ViewTreeObserver
+import androidx.activity.ComponentActivity
 import androidx.annotation.ColorInt
 import androidx.annotation.Nullable
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.OnLifecycleEvent
 
 class BlurShape(
     private val parentView: View,
@@ -24,7 +27,7 @@ class BlurShape(
     @ColorInt val overlayColor: Int = 0xffffff,
     @Nullable inset: RectF? = null,
     @Nullable innerRadii: FloatArray? = null
-) : RoundRectShape(cornerRadius, inset, innerRadii) {
+) : RoundRectShape(cornerRadius, inset, innerRadii), LifecycleObserver {
     companion object {
         private const val TAG = "BlurShape"
 
@@ -74,7 +77,11 @@ class BlurShape(
     }
 
     fun init(measuredWidth: Int, measuredHeight: Int) {
+        Log.i(TAG, "init: measuredWidth:$measuredWidth measuredHeight$measuredHeight")
         setBlurAutoUpdate(true)
+        if (selfView.context is ComponentActivity) {
+            (selfView.context as ComponentActivity).lifecycle.addObserver(this)
+        }
         internalBitmap = Bitmap.createBitmap(
             measuredWidth,
             measuredHeight,
@@ -83,6 +90,11 @@ class BlurShape(
         internalCanvas = BlurViewCanvas(internalBitmap)
         initialized = true
         updateBlur()
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
+    fun onResume(){
+        renderBlur.onResume()
     }
 
     private fun setBlurAutoUpdate(enabled: Boolean) {

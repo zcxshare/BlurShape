@@ -87,4 +87,9 @@ public final class RenderScriptBlur implements RenderBlur {
     public void render(@NonNull Canvas canvas, @NonNull Bitmap bitmap) {
         canvas.drawBitmap(bitmap, 0f, 0f, paint);
     }
+
+    @Override
+    public void onResume() {
+
+    }
 }

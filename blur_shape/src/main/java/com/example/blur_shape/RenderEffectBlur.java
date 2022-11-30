@@ -13,12 +13,14 @@ import androidx.annotation.RequiresApi;
 
 @RequiresApi(Build.VERSION_CODES.S)
 public class RenderEffectBlur implements RenderBlur {
+    private static final String TAG = "RenderEffectBlur";
     private static final float DEFAULT_SCALE_FACTOR = 6f;
     private final Paint paint = new Paint(Paint.FILTER_BITMAP_FLAG);
     private final RenderNode node = new RenderNode("BlurViewNode");
 
     private int height, width;
     private float blurRadius;
+    private Bitmap bitmap;
 
     public RenderEffectBlur() {
     }
@@ -31,11 +33,12 @@ public class RenderEffectBlur implements RenderBlur {
             width = bitmap.getWidth();
             node.setPosition(0, 0, width, height);
         }
-//        Canvas canvas = node.beginRecording();
-//        canvas.drawBitmap(bitmap, 0, 0, null);
-//        node.endRecording();
+        Canvas canvas = node.beginRecording();
+        canvas.drawBitmap(bitmap, 0, 0, null);
+        node.endRecording();
         node.setRenderEffect(RenderEffect.createBlurEffect(blurRadius, blurRadius, Shader.TileMode.MIRROR));
         // returning not blurred bitmap, because the rendering relies on the RenderNode
+        this.bitmap = bitmap;
         return bitmap;
     }
 
@@ -53,13 +56,18 @@ public class RenderEffectBlur implements RenderBlur {
     @Override
     public void render(@NonNull Canvas canvas, @NonNull Bitmap ignored) {
         if (canvas.isHardwareAccelerated()) {
-            Canvas recordingCanvas = node.beginRecording();
-            recordingCanvas.drawBitmap(ignored, 0, 0, null);
-            node.endRecording();
             canvas.drawRenderNode(node);
-            long endTime = System.currentTimeMillis();
-        }else {
+        } else {
             canvas.drawBitmap(ignored, 0f, 0f, paint);
+        }
+    }
+
+    @Override
+    public void onResume() {
+        if (bitmap != null) {
+            Canvas recordingCanvas = node.beginRecording();
+            recordingCanvas.drawBitmap(bitmap, 0, 0, null);
+            node.endRecording();
         }
     }
 }
