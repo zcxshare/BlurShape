@@ -15,23 +15,11 @@ Android空间毛玻璃、磨砂、高斯模糊背景，带彩色边框，自定�
 #### 使用说明
 
 ``` 
-view.addOnLayoutChangeListener(object : View.OnLayoutChangeListener {
-            override fun onLayoutChange(
-                v: View, left: Int, top: Int, right: Int, bottom: Int,
-                oldLeft: Int, oldTop: Int, oldRight: Int, oldBottom: Int
-            ) {
-                v.removeOnLayoutChangeListener(this)
-                val shape = BlurShape(blurParentView, view).apply { //第一个参数是以该view为基础进行模糊处理,第二个是需要添加该背景view
-                    val gradient = LinearGradient(
-                        0f, v.height.toFloat() / 3 * 2, v.width.toFloat(), v.height.toFloat(),
-                        BG_COLOURS, POSITION, Shader.TileMode.CLAMP
-                    ) 
-                    setStroke(DensityUtil.dp2px(3f).toFloat(), gradient)//添加边框线
-                    setRadius(DensityUtil.dp2px(10f).toFloat()) //添加倒角
-                }
-                v.background = ShapeDrawable(shape) //将背景设置到view上
-            }
-        })
+        val shape = BlurShape(clBg, tvContent).apply {//第一个参数是以该view为基础进行模糊处理,第二个是需要添加该背景view
+            setStroke(DensityUtil.dp2px(3f).toFloat(),getColor(R.color.bg_treat_colours2))//添加边框线
+            setRadius(DensityUtil.dp2px(10f).toFloat())//添加倒角
+        }
+        tvContent.background = ShapeDrawable(shape)
 ```
 
 

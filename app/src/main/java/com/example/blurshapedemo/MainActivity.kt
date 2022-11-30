@@ -38,23 +38,56 @@ class MainActivity : AppCompatActivity() {
     private fun initView() {
         val clBg = findViewById<View>(R.id.cl_bg)
         val tvContent = findViewById<TextView>(R.id.tv_content)
+        val tvContent2 = findViewById<TextView>(R.id.tv_content2)
+        val tvContent3 = findViewById<TextView>(R.id.tv_content3)
         OverScrollDecoratorHelper.setUpStaticOverScroll(
-            tvContent, OverScrollDecoratorHelper.ORIENTATION_VERTICAL)
+            tvContent, OverScrollDecoratorHelper.ORIENTATION_VERTICAL
+        )
+        OverScrollDecoratorHelper.setUpStaticOverScroll(
+            tvContent2, OverScrollDecoratorHelper.ORIENTATION_VERTICAL
+        )
+        OverScrollDecoratorHelper.setUpStaticOverScroll(
+            tvContent3, OverScrollDecoratorHelper.ORIENTATION_VERTICAL
+        )
+        val shape2 = BlurShape(clBg, tvContent2).apply {
+            setStroke(
+                DensityUtil.dp2px(3f).toFloat(),
+                getColor(R.color.bg_treat_colours2))
+            setRadius(DensityUtil.dp2px(10f).toFloat())
+        }
+        tvContent2.background = ShapeDrawable(shape2)
+
+        val shape3 = BlurShape(clBg, tvContent3).apply {
+            setStroke(
+                DensityUtil.dp2px(3f).toFloat(),
+                ResourcesUtils.getColor(R.color.bg_treat_colours3)
+            )
+            setRadius(DensityUtil.dp2px(0f).toFloat(),DensityUtil.dp2px(20f).toFloat(),
+                DensityUtil.dp2px(30f).toFloat(),DensityUtil.dp2px(40f).toFloat())
+        }
+        tvContent3.background = ShapeDrawable(shape3)
+
         tvContent.addOnLayoutChangeListener(object : View.OnLayoutChangeListener {
             override fun onLayoutChange(
                 v: View, left: Int, top: Int, right: Int, bottom: Int,
                 oldLeft: Int, oldTop: Int, oldRight: Int, oldBottom: Int
             ) {
                 v.removeOnLayoutChangeListener(this)
+                val gradient = LinearGradient(
+                    0f,
+                    tvContent.height.toFloat() / 3 * 2,
+                    tvContent.width.toFloat(),
+                    tvContent.height.toFloat(),
+                    BG_COLOURS,
+                    POSITION,
+                    Shader.TileMode.CLAMP
+                )
                 val shape = BlurShape(clBg, tvContent).apply {
-                    val gradient = LinearGradient(
-                        0f, v.height.toFloat() / 3 * 2, v.width.toFloat(), v.height.toFloat(),
-                        BG_COLOURS, POSITION, Shader.TileMode.CLAMP
-                    )
                     setStroke(DensityUtil.dp2px(3f).toFloat(), gradient)
                     setRadius(DensityUtil.dp2px(10f).toFloat())
                 }
-                v.background = ShapeDrawable(shape)
+                tvContent.paint.shader = gradient
+                tvContent.background = ShapeDrawable(shape)
             }
         })
 
