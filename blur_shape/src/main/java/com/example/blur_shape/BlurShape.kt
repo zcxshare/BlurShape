@@ -4,7 +4,9 @@ import android.content.Context
 import android.graphics.*
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.shapes.RoundRectShape
+import android.os.Build
 import android.text.TextPaint
+import android.util.Log
 import android.view.View
 import android.view.ViewTreeObserver
 import androidx.annotation.ColorInt
@@ -24,6 +26,8 @@ class BlurShape(
     @Nullable innerRadii: FloatArray? = null
 ) : RoundRectShape(cornerRadius, inset, innerRadii) {
     companion object {
+        private const val TAG = "BlurShape"
+
         @ColorInt
         const val TRANSPARENT = 0
         const val DEFAULT_BLUR_RADIUS = 25f
@@ -31,7 +35,13 @@ class BlurShape(
     }
 
     private val blurRadius = DEFAULT_BLUR_RADIUS
-    private val blurAlgorithm: RenderScriptBlur by lazy { RenderScriptBlur(getContext()) }
+    private val renderBlur: RenderBlur by lazy {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            RenderEffectBlur()
+        } else {
+            RenderScriptBlur(getContext())
+        }
+    }
     private lateinit var internalCanvas: BlurViewCanvas
     private lateinit var internalBitmap: Bitmap
 
@@ -44,6 +54,9 @@ class BlurShape(
     private var frameClearDrawable: Drawable? = null
     private val rootLocation = IntArray(2)
     private val selfLocation = IntArray(2)
+    private var lastScaledLeftPosition: Float = 0F
+    private var lastScaledTopPosition: Float = 0F
+    private var lastUpdateTime: Long = 0L
 
     private val cornerPath = Path()
     private val mRectF = RectF()
@@ -54,7 +67,6 @@ class BlurShape(
             updateBlur()
             true
         }
-    val paint = TextPaint()
 
     override fun onResize(w: Float, h: Float) {
         super.onResize(w, h)
@@ -66,7 +78,7 @@ class BlurShape(
         internalBitmap = Bitmap.createBitmap(
             measuredWidth,
             measuredHeight,
-            blurAlgorithm.supportedBitmapConfig
+            renderBlur.getSupportedBitmapConfig()
         )
         internalCanvas = BlurViewCanvas(internalBitmap)
         initialized = true
@@ -84,27 +96,32 @@ class BlurShape(
         if (!blurEnabled || !initialized) {
             return
         }
-        if (frameClearDrawable == null) {
-            internalBitmap.eraseColor(Color.TRANSPARENT)
-        } else {
-            frameClearDrawable?.draw(internalCanvas)
+        val start = System.currentTimeMillis()
+        val hasMatrix = setupInternalCanvasMatrix()
+        if (hasMatrix) {
+            if (frameClearDrawable == null) {
+                internalBitmap.eraseColor(Color.TRANSPARENT)
+            } else {
+                frameClearDrawable?.draw(internalCanvas)
+            }
+            if (parentView.background != null) {
+                parentView.background.draw(internalCanvas)
+            } else {
+                parentView.draw(internalCanvas)
+            }
+            internalCanvas.restore()
+            blurAndSave()
+            lastUpdateTime = System.currentTimeMillis()
         }
-        internalCanvas.save()
-        setupInternalCanvasMatrix()
-        if (parentView.background != null) {
-            parentView.background.draw(internalCanvas)
-        } else {
-            parentView.draw(internalCanvas)
-        }
-        internalCanvas.restore()
-        blurAndSave()
+        val end = System.currentTimeMillis()
+        Log.i(TAG, "updateBlur: ${end - start}")
     }
 
     fun setFrameClearDrawable(frameClearDrawable: Drawable) {
         this.frameClearDrawable = frameClearDrawable
     }
 
-    private fun setupInternalCanvasMatrix() {
+    private fun setupInternalCanvasMatrix(): Boolean {
         parentView.getLocationOnScreen(rootLocation)
         selfView.getLocationOnScreen(selfLocation)
         val left: Int = selfLocation[0] - rootLocation[0]
@@ -113,13 +130,20 @@ class BlurShape(
         val scaleFactorW: Float = width / internalBitmap.width
         val scaledLeftPosition = -left / scaleFactorW
         val scaledTopPosition = -top / scaleFactorH
+        if (lastScaledLeftPosition == scaledLeftPosition && lastScaledTopPosition == scaledTopPosition) {
+            return false
+        }
+        lastScaledLeftPosition = scaledLeftPosition
+        lastScaledTopPosition = scaledTopPosition
+        internalCanvas.save()
         internalCanvas.translate(scaledLeftPosition, scaledTopPosition)
         internalCanvas.scale(1 / scaleFactorW, 1 / scaleFactorH)
+        return true
     }
 
     private fun blurAndSave() {
-        internalBitmap = blurAlgorithm.blur(internalBitmap, blurRadius)
-        if (!blurAlgorithm.canModifyBitmap()) {
+        internalBitmap = renderBlur.blur(internalBitmap, blurRadius)
+        if (!renderBlur.canModifyBitmap()) {
             internalCanvas.setBitmap(internalBitmap)
         }
     }
@@ -137,7 +161,7 @@ class BlurShape(
         drawCorner(canvas)
         canvas.save()
         canvas.scale(scaleFactorW, scaleFactorH)
-        blurAlgorithm.render(canvas, internalBitmap)
+        renderBlur.render(canvas, internalBitmap)
         canvas.restore()
         if (overlayColor != TRANSPARENT) {
             canvas.drawColor(overlayColor)

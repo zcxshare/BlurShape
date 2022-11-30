@@ -13,7 +13,7 @@ import android.renderscript.ScriptIntrinsicBlur;
 import androidx.annotation.NonNull;
 
 
-public final class RenderScriptBlur {
+public final class RenderScriptBlur implements RenderBlur {
     float DEFAULT_SCALE_FACTOR = 6f;
     private final Paint paint = new Paint(Paint.FILTER_BITMAP_FLAG);
     private final RenderScript renderScript;
