@@ -1,11 +1,10 @@
-package com.example.blur_shape
+package com.zcxshare.blur_shape
 
 import android.content.Context
 import android.graphics.*
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.shapes.RoundRectShape
 import android.os.Build
-import android.util.Log
 import android.view.View
 import android.view.ViewTreeObserver
 import androidx.activity.ComponentActivity
@@ -36,7 +35,6 @@ class BlurShape(
         CORNER_RADIUS_DEFAULT, CORNER_RADIUS_DEFAULT
     ),overlayColor)
     companion object {
-        private const val TAG = "BlurShape"
 
         @ColorInt
         const val TRANSPARENT = 0
@@ -84,7 +82,6 @@ class BlurShape(
     }
 
     fun init(measuredWidth: Int, measuredHeight: Int) {
-        Log.i(TAG, "init: measuredWidth:$measuredWidth measuredHeight$measuredHeight")
         setBlurAutoUpdate(true)
         if (selfView.context is ComponentActivity) {
             (selfView.context as ComponentActivity).lifecycle.addObserver(this)
@@ -115,7 +112,6 @@ class BlurShape(
         if (!blurEnabled || !initialized) {
             return
         }
-        val start = System.currentTimeMillis()
         val hasMatrix = setupInternalCanvasMatrix()
         if (hasMatrix) {
             if (frameClearDrawable == null) {
@@ -132,8 +128,6 @@ class BlurShape(
             blurAndSave()
             lastUpdateTime = System.currentTimeMillis()
         }
-        val end = System.currentTimeMillis()
-        Log.i(TAG, "updateBlur: ${end - start}")
     }
 
     fun setFrameClearDrawable(frameClearDrawable: Drawable) {

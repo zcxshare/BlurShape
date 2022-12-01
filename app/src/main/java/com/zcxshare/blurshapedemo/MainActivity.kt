@@ -1,4 +1,4 @@
-package com.example.blurshapedemo
+package com.zcxshare.blurshapedemo
 
 import android.graphics.LinearGradient
 import android.graphics.Shader
@@ -6,11 +6,11 @@ import android.graphics.drawable.ShapeDrawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
-import android.widget.ScrollView
 import android.widget.TextView
-import com.example.blur_shape.BlurShape
-import com.example.blurshapedemo.utils.DensityUtil
-import com.example.blurshapedemo.utils.ResourcesUtils
+import com.zcxshare.blur_shape.BlurShape
+import com.example.blurshapedemo.R
+import com.zcxshare.blurshapedemo.utils.DensityUtil
+import com.zcxshare.blurshapedemo.utils.ResourcesUtils
 import me.everything.android.ui.overscroll.OverScrollDecoratorHelper
 
 class MainActivity : AppCompatActivity() {
@@ -62,8 +62,9 @@ class MainActivity : AppCompatActivity() {
                 DensityUtil.dp2px(3f).toFloat(),
                 ResourcesUtils.getColor(R.color.bg_treat_colours3)
             )
-            setRadius(DensityUtil.dp2px(0f).toFloat(),DensityUtil.dp2px(20f).toFloat(),
-                DensityUtil.dp2px(30f).toFloat(),DensityUtil.dp2px(40f).toFloat())
+            setRadius(
+                DensityUtil.dp2px(0f).toFloat(), DensityUtil.dp2px(20f).toFloat(),
+                DensityUtil.dp2px(30f).toFloat(), DensityUtil.dp2px(40f).toFloat())
         }
         tvContent3.background = ShapeDrawable(shape3)
 

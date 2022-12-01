@@ -1,4 +1,4 @@
-package com.example.blurshapedemo
+package com.zcxshare.blurshapedemo
 
 import org.junit.Test
 

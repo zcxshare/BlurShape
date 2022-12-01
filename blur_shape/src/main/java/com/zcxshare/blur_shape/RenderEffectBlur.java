@@ -1,4 +1,4 @@
-package com.example.blur_shape;
+package com.zcxshare.blur_shape;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -13,13 +13,11 @@ import androidx.annotation.RequiresApi;
 
 @RequiresApi(Build.VERSION_CODES.S)
 public class RenderEffectBlur implements RenderBlur {
-    private static final String TAG = "RenderEffectBlur";
     private static final float DEFAULT_SCALE_FACTOR = 6f;
     private final Paint paint = new Paint(Paint.FILTER_BITMAP_FLAG);
     private final RenderNode node = new RenderNode("BlurViewNode");
 
     private int height, width;
-    private float blurRadius;
     private Bitmap bitmap;
 
     public RenderEffectBlur() {
@@ -27,7 +25,6 @@ public class RenderEffectBlur implements RenderBlur {
 
     @Override
     public Bitmap blur(Bitmap bitmap, float blurRadius) {
-        this.blurRadius = blurRadius;
         if (bitmap.getHeight() != height || bitmap.getWidth() != width) {
             height = bitmap.getHeight();
             width = bitmap.getWidth();

@@ -1,4 +1,4 @@
-package com.example.blurshapedemo.utils;
+package com.zcxshare.blurshapedemo.utils;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
