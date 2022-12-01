@@ -1,4 +1,5 @@
 # BlurShape
+[![](https://jitpack.io/v/zcxshare/BlurShape.svg)](https://jitpack.io/#zcxshare/BlurShape)
 
 #### 介绍
 Android空间毛玻璃、磨砂、高斯模糊背景，带彩色边框，自定义shape
@@ -10,7 +11,25 @@ Android空间毛玻璃、磨砂、高斯模糊背景，带彩色边框，自定�
 
 #### 安装教程
 
-自行下载后获取blur_shape module的代码依赖即可，比较简单
+###### 1、gradle集成
+``` 
+	//项目根目录的build.gradle中
+	allprojects {
+		repositories {
+			...
+			maven { url 'https://jitpack.io' }
+		}
+	}
+	
+	//app的build.gradle中
+	dependencies {
+	        implementation 'com.github.zcxshare:BlurShape:1.1'
+	}
+``` 
+
+###### 2、自行下载
+	
+	获取blur_shape module的代码依赖即可，比较简单
 
 #### 使用说明
 
