@@ -28,6 +28,13 @@ class BlurShape(
     @Nullable inset: RectF? = null,
     @Nullable innerRadii: FloatArray? = null
 ) : RoundRectShape(cornerRadius, inset, innerRadii), LifecycleObserver {
+
+    constructor(parentView: View,selfView: View,@ColorInt overlayColor: Int):this(parentView,selfView,floatArrayOf(
+        CORNER_RADIUS_DEFAULT, CORNER_RADIUS_DEFAULT,
+        CORNER_RADIUS_DEFAULT, CORNER_RADIUS_DEFAULT,
+        CORNER_RADIUS_DEFAULT, CORNER_RADIUS_DEFAULT,
+        CORNER_RADIUS_DEFAULT, CORNER_RADIUS_DEFAULT
+    ),overlayColor)
     companion object {
         private const val TAG = "BlurShape"
 
