@@ -8,6 +8,13 @@
     android:background="@drawable/bg"
     tools:context="com.zcxshare.blurshapedemo.MainActivity">
 
+    <androidx.recyclerview.widget.RecyclerView
+        app:layout_constraintTop_toTopOf="parent"
+        android:id="@+id/rv_items"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
     <TextView
         android:id="@+id/tv_content"
         android:layout_width="300dp"
@@ -16,6 +23,7 @@
         android:focusable="true"
         android:gravity="center"
         android:text="彩色"
+        android:visibility="gone"
         android:textSize="25sp"
         app:layout_constraintBottom_toTopOf="@+id/tv_content2"
         app:layout_constraintEnd_toEndOf="parent"
@@ -29,6 +37,7 @@
         android:clickable="true"
         android:focusable="true"
         android:gravity="center"
+        android:visibility="gone"
         android:textColor="@color/bg_treat_colours2"
         android:text="纯色"
         android:textSize="25sp"
@@ -43,6 +52,7 @@
         android:layout_height="100dp"
         android:clickable="true"
         android:focusable="true"
+        android:visibility="gone"
         android:gravity="center"
         android:textColor="@color/bg_treat_colours3"
         android:text="倒角"

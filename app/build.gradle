@@ -42,4 +42,5 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
     implementation 'io.github.everythingme:overscroll-decor-android:1.1.1'
     implementation(project(":blur_shape"))
+//    implementation 'com.github.zcxshare:BlurShape:1.3'
 }

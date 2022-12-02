@@ -5,6 +5,7 @@ import android.graphics.*
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.shapes.RoundRectShape
 import android.os.Build
+import android.util.Log
 import android.view.View
 import android.view.ViewTreeObserver
 import androidx.activity.ComponentActivity
@@ -28,13 +29,8 @@ class BlurShape(
     @Nullable innerRadii: FloatArray? = null
 ) : RoundRectShape(cornerRadius, inset, innerRadii), LifecycleObserver {
 
-    constructor(parentView: View,selfView: View,@ColorInt overlayColor: Int):this(parentView,selfView,floatArrayOf(
-        CORNER_RADIUS_DEFAULT, CORNER_RADIUS_DEFAULT,
-        CORNER_RADIUS_DEFAULT, CORNER_RADIUS_DEFAULT,
-        CORNER_RADIUS_DEFAULT, CORNER_RADIUS_DEFAULT,
-        CORNER_RADIUS_DEFAULT, CORNER_RADIUS_DEFAULT
-    ),overlayColor)
     companion object {
+        private const val TAG = "BlurShape"
 
         @ColorInt
         const val TRANSPARENT = 0
@@ -76,6 +72,15 @@ class BlurShape(
             true
         }
 
+    constructor(parentView: View, selfView: View, @ColorInt overlayColor: Int) : this(
+        parentView, selfView, floatArrayOf(
+            CORNER_RADIUS_DEFAULT, CORNER_RADIUS_DEFAULT,
+            CORNER_RADIUS_DEFAULT, CORNER_RADIUS_DEFAULT,
+            CORNER_RADIUS_DEFAULT, CORNER_RADIUS_DEFAULT,
+            CORNER_RADIUS_DEFAULT, CORNER_RADIUS_DEFAULT
+        ), overlayColor
+    )
+
     override fun onResize(w: Float, h: Float) {
         super.onResize(w, h)
         init(w.toInt(), h.toInt())
@@ -97,7 +102,7 @@ class BlurShape(
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
-    fun onResume(){
+    fun onResume() {
         renderBlur.onResume()
     }
 
@@ -163,9 +168,11 @@ class BlurShape(
 
     override fun draw(canvas: Canvas, paint: Paint) {
         if (!blurEnabled || !initialized) {
+            Log.i(TAG, "draw: 未绘制1：${this.hashCode()} blurEnabled:$blurEnabled initialized:$initialized")
             return
         }
         if (canvas is BlurViewCanvas) {
+            Log.i(TAG, "draw: 未绘制2：${this.hashCode()} canvas is BlurViewCanvas")
             return
         }
 

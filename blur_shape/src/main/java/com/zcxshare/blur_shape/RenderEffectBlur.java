@@ -17,6 +17,7 @@ public class RenderEffectBlur implements RenderBlur {
     private final Paint paint = new Paint(Paint.FILTER_BITMAP_FLAG);
     private final RenderNode node = new RenderNode("BlurViewNode");
 
+    private float lastBlurRadius;
     private int height, width;
     private Bitmap bitmap;
 
@@ -33,7 +34,10 @@ public class RenderEffectBlur implements RenderBlur {
         Canvas canvas = node.beginRecording();
         canvas.drawBitmap(bitmap, 0, 0, null);
         node.endRecording();
-        node.setRenderEffect(RenderEffect.createBlurEffect(blurRadius, blurRadius, Shader.TileMode.MIRROR));
+        if (lastBlurRadius != blurRadius) {
+            node.setRenderEffect(RenderEffect.createBlurEffect(blurRadius, blurRadius, Shader.TileMode.MIRROR));
+            lastBlurRadius = blurRadius;
+        }
         // returning not blurred bitmap, because the rendering relies on the RenderNode
         this.bitmap = bitmap;
         return bitmap;

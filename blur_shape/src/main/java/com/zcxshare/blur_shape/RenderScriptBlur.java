@@ -9,6 +9,7 @@ import android.renderscript.Allocation;
 import android.renderscript.Element;
 import android.renderscript.RenderScript;
 import android.renderscript.ScriptIntrinsicBlur;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -22,6 +23,8 @@ public final class RenderScriptBlur implements RenderBlur {
 
     private int lastBitmapWidth = -1;
     private int lastBitmapHeight = -1;
+    private float lastBlurRadius;
+    private Allocation inAllocation;
 
     /**
      * @param context Context to create the {@link RenderScript}
@@ -41,10 +44,19 @@ public final class RenderScriptBlur implements RenderBlur {
      * @return blurred bitmap
      */
     public Bitmap blur(Bitmap bitmap, float blurRadius) {
-        //Allocation will use the same backing array of pixels as bitmap if created with USAGE_SHARED flag
-        Allocation inAllocation = Allocation.createFromBitmap(renderScript, bitmap);
 
-        if (!canReuseAllocation(bitmap)) {
+        if (blurRadius != lastBlurRadius) {
+            blurScript.setRadius(blurRadius);
+            this.lastBlurRadius = blurRadius;
+        }
+        boolean canReuseAllocation = canReuseAllocation(bitmap);
+        if (!canReuseAllocation) {
+            //Allocation will use the same backing array of pixels as bitmap if created with USAGE_SHARED flag
+            if (inAllocation != null){
+                inAllocation.destroy();
+            }
+            inAllocation = Allocation.createFromBitmap(renderScript, bitmap);
+            blurScript.setInput(inAllocation);
             if (outAllocation != null) {
                 outAllocation.destroy();
             }
@@ -53,13 +65,9 @@ public final class RenderScriptBlur implements RenderBlur {
             lastBitmapHeight = bitmap.getHeight();
         }
 
-        blurScript.setRadius(blurRadius);
-        blurScript.setInput(inAllocation);
         //do not use inAllocation in forEach. it will cause visual artifacts on blurred Bitmap
         blurScript.forEach(outAllocation);
         outAllocation.copyTo(bitmap);
-
-        inAllocation.destroy();
         return bitmap;
     }
 
