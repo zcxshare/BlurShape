@@ -15,7 +15,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
 
-class BlurShape(
+open class BlurShape(
     private val parentView: View,
     private val selfView: View,
     var cornerRadius: FloatArray = floatArrayOf(
@@ -87,6 +87,9 @@ class BlurShape(
     }
 
     fun init(measuredWidth: Int, measuredHeight: Int) {
+        if (measuredWidth <= 0 || measuredHeight <= 0) {
+            return
+        }
         setBlurAutoUpdate(true)
         if (selfView.context is ComponentActivity) {
             (selfView.context as ComponentActivity).lifecycle.addObserver(this)
@@ -168,7 +171,10 @@ class BlurShape(
 
     override fun draw(canvas: Canvas, paint: Paint) {
         if (!blurEnabled || !initialized) {
-            Log.i(TAG, "draw: 未绘制1：${this.hashCode()} blurEnabled:$blurEnabled initialized:$initialized")
+            Log.i(
+                TAG,
+                "draw: 未绘制1：${this.hashCode()} blurEnabled:$blurEnabled initialized:$initialized"
+            )
             return
         }
         if (canvas is BlurViewCanvas) {
