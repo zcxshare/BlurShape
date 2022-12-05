@@ -71,4 +71,9 @@ public class RenderEffectBlur implements RenderBlur {
             node.endRecording();
         }
     }
+
+    @Override
+    public void onDestroy(){
+
+    }
 }

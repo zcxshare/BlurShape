@@ -73,14 +73,6 @@ public final class RenderScriptBlur implements RenderBlur {
         return bitmap;
     }
 
-    public final void destroy() {
-        blurScript.destroy();
-        renderScript.destroy();
-        if (outAllocation != null) {
-            outAllocation.destroy();
-        }
-    }
-
     public boolean canModifyBitmap() {
         return true;
     }
@@ -101,5 +93,17 @@ public final class RenderScriptBlur implements RenderBlur {
     @Override
     public void onResume() {
 
+    }
+
+
+    public void onDestroy() {
+        blurScript.destroy();
+        renderScript.destroy();
+        if (outAllocation != null) {
+            outAllocation.destroy();
+        }
+        if (inAllocation != null){
+            inAllocation.destroy();
+        }
     }
 }

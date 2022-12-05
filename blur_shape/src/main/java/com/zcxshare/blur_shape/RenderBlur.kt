@@ -9,4 +9,5 @@ interface RenderBlur {
     fun getSupportedBitmapConfig(): Bitmap.Config
     fun render(canvas: Canvas, bitmap: Bitmap)
     fun onResume()
+    fun onDestroy()
 }

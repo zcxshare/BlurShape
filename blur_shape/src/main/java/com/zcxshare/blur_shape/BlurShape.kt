@@ -109,6 +109,11 @@ open class BlurShape(
         renderBlur.onResume()
     }
 
+    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+    fun onDestroy() {
+        renderBlur.onDestroy()
+    }
+
     private fun setBlurAutoUpdate(enabled: Boolean) {
         parentView.viewTreeObserver.removeOnPreDrawListener(drawListener)
         if (enabled) {
