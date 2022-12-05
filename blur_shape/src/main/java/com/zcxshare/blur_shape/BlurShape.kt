@@ -1,5 +1,6 @@
 package com.zcxshare.blur_shape
 
+import android.app.Service
 import android.content.Context
 import android.graphics.*
 import android.graphics.drawable.Drawable
@@ -11,6 +12,9 @@ import android.view.ViewTreeObserver
 import androidx.activity.ComponentActivity
 import androidx.annotation.ColorInt
 import androidx.annotation.Nullable
+import androidx.core.app.ServiceCompat
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
@@ -93,6 +97,8 @@ open class BlurShape(
         setBlurAutoUpdate(true)
         if (selfView.context is ComponentActivity) {
             (selfView.context as ComponentActivity).lifecycle.addObserver(this)
+        }else if (parentView.context is ComponentActivity){
+            (parentView.context as ComponentActivity).lifecycle.addObserver(this)
         }
         internalBitmap = Bitmap.createBitmap(
             measuredWidth,
