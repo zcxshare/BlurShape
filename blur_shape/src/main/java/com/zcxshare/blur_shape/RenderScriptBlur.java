@@ -63,6 +63,8 @@ public final class RenderScriptBlur implements RenderBlur {
             outAllocation = Allocation.createTyped(renderScript, inAllocation.getType());
             lastBitmapWidth = bitmap.getWidth();
             lastBitmapHeight = bitmap.getHeight();
+        }else {
+            inAllocation.copyFrom(bitmap);
         }
 
         //do not use inAllocation in forEach. it will cause visual artifacts on blurred Bitmap

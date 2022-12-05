@@ -121,7 +121,7 @@ class MainActivity : AppCompatActivity() {
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT
                 )
-                layoutParams.setMargins(10)
+                layoutParams.setMargins(20)
                 textView.layoutParams = layoutParams
                 textView.setPadding(50)
                 textView.gravity = Gravity.CENTER
@@ -146,7 +146,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun getItemCount(): Int {
-                return 10000
+                return 20
             }
         }
     }
