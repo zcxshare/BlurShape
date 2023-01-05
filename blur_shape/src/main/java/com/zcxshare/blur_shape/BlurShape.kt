@@ -68,7 +68,7 @@ open class BlurShape(
 
     private val cornerPath = Path()
     private val mRectF = RectF()
-
+    var isFirst = true
 
     private val drawListener =
         ViewTreeObserver.OnPreDrawListener {
@@ -94,10 +94,11 @@ open class BlurShape(
         if (measuredWidth <= 0 || measuredHeight <= 0) {
             return
         }
+        isFirst = true
         setBlurAutoUpdate(true)
         if (selfView.context is ComponentActivity) {
             (selfView.context as ComponentActivity).lifecycle.addObserver(this)
-        }else if (parentView.context is ComponentActivity){
+        } else if (parentView.context is ComponentActivity) {
             (parentView.context as ComponentActivity).lifecycle.addObserver(this)
         }
         internalBitmap = Bitmap.createBitmap(
@@ -162,9 +163,10 @@ open class BlurShape(
         val scaleFactorW: Float = width / internalBitmap.width
         val scaledLeftPosition = -left / scaleFactorW
         val scaledTopPosition = -top / scaleFactorH
-        if (lastScaledLeftPosition == scaledLeftPosition && lastScaledTopPosition == scaledTopPosition) {
+        if (lastScaledLeftPosition == scaledLeftPosition && lastScaledTopPosition == scaledTopPosition && !isFirst) {
             return false
         }
+        isFirst = false
         lastScaledLeftPosition = scaledLeftPosition
         lastScaledTopPosition = scaledTopPosition
         internalCanvas.save()

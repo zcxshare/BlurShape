@@ -15,10 +15,11 @@ import androidx.annotation.NonNull;
 
 
 public final class RenderScriptBlur implements RenderBlur {
+    private Context context;
     float DEFAULT_SCALE_FACTOR = 6f;
     private final Paint paint = new Paint(Paint.FILTER_BITMAP_FLAG);
-    private final RenderScript renderScript;
-    private final ScriptIntrinsicBlur blurScript;
+    private RenderScript renderScript;
+    private ScriptIntrinsicBlur blurScript;
     private Allocation outAllocation;
 
     private int lastBitmapWidth = -1;
@@ -30,8 +31,7 @@ public final class RenderScriptBlur implements RenderBlur {
      * @param context Context to create the {@link RenderScript}
      */
     public RenderScriptBlur(Context context) {
-        renderScript = RenderScript.create(context);
-        blurScript = ScriptIntrinsicBlur.create(renderScript, Element.U8_4(renderScript));
+        this.context = context;
     }
 
     private boolean canReuseAllocation(Bitmap bitmap) {
@@ -44,7 +44,12 @@ public final class RenderScriptBlur implements RenderBlur {
      * @return blurred bitmap
      */
     public Bitmap blur(Bitmap bitmap, float blurRadius) {
-
+        if (renderScript == null) {
+            renderScript = RenderScript.create(context);
+        }
+        if (blurScript == null) {
+            blurScript = ScriptIntrinsicBlur.create(renderScript, Element.U8_4(renderScript));
+        }
         if (blurRadius != lastBlurRadius) {
             blurScript.setRadius(blurRadius);
             this.lastBlurRadius = blurRadius;
@@ -52,7 +57,7 @@ public final class RenderScriptBlur implements RenderBlur {
         boolean canReuseAllocation = canReuseAllocation(bitmap);
         if (!canReuseAllocation) {
             //Allocation will use the same backing array of pixels as bitmap if created with USAGE_SHARED flag
-            if (inAllocation != null){
+            if (inAllocation != null) {
                 inAllocation.destroy();
             }
             inAllocation = Allocation.createFromBitmap(renderScript, bitmap);
@@ -63,7 +68,7 @@ public final class RenderScriptBlur implements RenderBlur {
             outAllocation = Allocation.createTyped(renderScript, inAllocation.getType());
             lastBitmapWidth = bitmap.getWidth();
             lastBitmapHeight = bitmap.getHeight();
-        }else {
+        } else {
             inAllocation.copyFrom(bitmap);
         }
 
@@ -97,13 +102,22 @@ public final class RenderScriptBlur implements RenderBlur {
 
 
     public void onDestroy() {
-        blurScript.destroy();
-        renderScript.destroy();
+        context = null;
+        if (renderScript != null) {
+            renderScript.destroy();
+            renderScript = null;
+        }
+        if (blurScript != null) {
+            blurScript.destroy();
+            blurScript = null;
+        }
         if (outAllocation != null) {
             outAllocation.destroy();
+            outAllocation = null;
         }
-        if (inAllocation != null){
+        if (inAllocation != null) {
             inAllocation.destroy();
+            inAllocation = null;
         }
     }
 }
