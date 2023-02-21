@@ -145,6 +145,7 @@ open class BlurShape(
                 parentView.draw(internalCanvas)
             }
             internalCanvas.restore()
+            cornerPath.reset()
             blurAndSave()
             lastUpdateTime = System.currentTimeMillis()
         }
@@ -218,8 +219,10 @@ open class BlurShape(
 
 
     private fun drawStroke(canvas: Canvas) {
-        if (!strokeEnabled || strokePaint == null) return
-        canvas.drawPath(cornerPath, strokePaint!!)
+        if (!strokeEnabled) return
+        strokePaint?.let {
+            canvas.drawPath(cornerPath, it)
+        }
     }
 
     fun setStroke(width: Float, @ColorInt color: Int) {
